@@ -1,6 +1,5 @@
 # Assessment Brief
 
-d
 
 ## CA1: Deploying to Production
 

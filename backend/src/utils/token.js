@@ -18,6 +18,8 @@ export function getUserIdFromToken(token) {
     const payload = jwt.verify(token, config.APP_SECRET, {
       algorithms: ["HS256"],
     });
+    //adding a bug
+    //return null;
     return payload.sub;
   } catch {
     return null;
