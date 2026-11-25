@@ -116,7 +116,11 @@ export default function FilesPage() {
         <UploadButton onUpload={handleUpload} />
       </div>
 
-      {actionError && <p className="mb-4 text-destructive">{actionError}</p>}
+      {actionError && (
+  <p role="alert" className="mb-4 text-destructive">
+    {actionError}
+  </p>
+)}
 
       <div className="grid gap-4 md:grid-cols-[1fr_18rem]">
         <div>
