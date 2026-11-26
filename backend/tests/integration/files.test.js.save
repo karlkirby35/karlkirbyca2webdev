@@ -1,0 +1,41 @@
+import { readFile } from "node:fs/promises";
+
+import { beforeEach, describe, expect, test } from "vitest";
+import request from "supertest";
+
+import app from "../../src/app.js";
+import { resetDatabase } from "../helpers/database.js";
+
+beforeEach(() => {
+  resetDatabase();
+});
+
+describe("files", () => {
+  test("saves an uploaded file", async () => {
+    const login = await request(app).post("/api/auth/login").send({
+      email: "alice@example.com",
+      password: "password123",
+    });
+
+    const res = await request(app)
+      .post("/api/files")
+      .set("Authorization", `Bearer ${login.body.token}`)
+      .attach("files", "tests/fixtures/Isle of Skye.jpg");
+
+
+    console.log("Upload response:", res.status, res.body);
+    expect(res.status).toBe(201);
+    expect(res.body[0].name).toBe("Isle of Skye.jpg");
+
+    const file = await request(res.body[0].url).get("/");
+
+    expect(file.status).toBe(200);
+    expect(file.body).toEqual(
+      await readFile("tests/fixtures/Isle of Skye.jpg"),
+    );
+
+    await request(app)
+      .delete(`/api/files/${res.body[0].id}`)
+      .set("Authorization", `Bearer ${login.body.token}`);
+  });
+});
